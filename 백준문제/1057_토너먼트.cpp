@@ -1,55 +1,65 @@
 #include <iostream>
 #include <queue>
+#include <vector>
 using namespace std;
 
-queue<int> q;
+vector < queue<int> > t;
 
+int function(queue<int> temp, int i, int jimin, int hansu) {
+	while (true) {
 
-int main() {
+		if (t[i].size() == 0) {
+			t.push_back(temp);
+			return 1;
+		}
+		else if (t[i].size() == 1) {
 
-	int num, jimin, hansu;
+			int temp1 = t[i].front();
+			t[i].pop();
+			temp.push(temp1);
+		}
+		else {
+			int temp1 = t[i].front();
+			t[i].pop();
+			int temp2 = t[i].front();
+			t[i].pop();
 
-	cin >> num >> jimin >> hansu;
-	
-	for (int i = 1; i <= num; i++) {
+			if ((temp1 == jimin && temp2 == hansu) || (temp2 == jimin && temp1 == hansu)) {
+				return 0;
+			}
+			else if ((temp1 == jimin || temp1 == hansu)) {
+				temp.push(temp1);
+			}
+			else if ((temp2 == jimin || temp2 == hansu)) {
+				temp.push(temp2);
+			}
+			else {
+				temp.push(temp1);
+			}
 
-		q.push(i);
-		if (num % 2 == 1) {
-			q.push(-1);
 		}
 	}
+}
+int main() {
+	int num, jimin, hansu;
+	cin >> num >> jimin >> hansu;
+	t.resize(1);
+	queue<int> a;
+	for (int i = 1; i <= num; i++) {
+		a.push(i);
+	}
 
-	int round = 0;
+	t.push_back(a);
 
-	while (!q.empty()) {
+	for (int i = 1; i < t.size(); i++) {
 
-		int temp1 = q.front();
-		q.pop();
-		int temp2 = q.front();
-		q.pop();
+		queue<int> temp;
 
-		if ((temp1 == jimin && temp2 == hansu) 
-			|| (temp2 == jimin && temp1 == hansu)) {
-			break;
-		}
-
-		int flag = 0;
-		if (temp1 == jimin || temp1 == hansu) {
-			q.push(temp1);
-			flag++;
-		}
-		if (temp2 == jimin || temp2 == hansu) {
-			q.push(temp2);
-			flag++;
-		}
+		int flag = function(temp, i, jimin, hansu);
 
 		if (flag == 0) {
-			q.push(temp1);
+			cout << i << endl;
+			break;
 		}
-
-		round++;
-
 	}
-
-	cout << round << endl;
 }
