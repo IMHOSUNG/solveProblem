@@ -1,8 +1,10 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 using namespace std;
 
-vector< vector<int> > Grill;
+vector< vector<char> > Grill;
+vector< vector< int> > map;
 
 void makeMap(int h , int w) {
 
@@ -15,14 +17,15 @@ void makeMap(int h , int w) {
 
 			char input;
 			cin >> input;
-			if (input != '.')
-				Grill[h_][w_] = (input - 'a' + 1);
-			else
-				Grill[h_][w_] = 0;
+
+			Grill[h_][w_] = input;
+
 		}
 	}
 }
 
+//쓸데 없는 짓이 었다... 테트리스 처럼 푸는 줄..
+/*
 class Pos {
 public:
 	int x;
@@ -30,9 +33,20 @@ public:
 	Pos(int y, int x) : y(y), x(x) {}
 };
 
+bool lessPos(Pos& a, Pos& b) {
+
+	if (a.x < b.x && a.y < b.y) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
 class Group{
 
 public:
+	int maxSize = 0;
+	int max = 0;
 	int group;
 	vector< Pos > shape;
 
@@ -42,9 +56,15 @@ public:
 
 	void reverse() {
 
-		int max = 0;
 		int min = 999;
 		for (vector<Pos>::size_type i = 0; i < shape.size(); i++) {
+
+			if (maxSize < shape[i].x) {
+				maxSize = shape[i].x;
+			}
+			if (maxSize < shape[i].y) {
+				maxSize = shape[i].y;
+			}
 
 			if (shape[i].x > max) {
 				max = shape[i].x;
@@ -69,15 +89,27 @@ public:
 		}
 	}
 
-	void rotate(int count) {
+	vector<Pos>& rotate(int count) {
 
-		if (count > 3) {
-			cout << "360degree is same 0 degree" << endl;
+		vector<Pos> temp = shape;
+
+		//count 1 = 90 2 = 180 3 = 270 
+		if (count >= 4) {
+			rotate(count%4);
 		}
 		else {
+			for (int i = 0; i < count; i++) {
 
+				for (vector<Pos>::size_type j = 0; j < shape.size(); j++) {
+					
+					int tempx = maxSize- shape[j].y;
+					int tempy = shape[j].x;
+					temp.push_back(Pos(tempy, tempx));
+				}
+			}
 		}
-
+		sort(shape.begin(), shape.end(), lessPos);
+		return temp;
 	}
 };
 
@@ -129,7 +161,7 @@ void makeGroup(int h, int w) {
 		}
 	}
 }
-
+*/
 int main() {
 
 	int TestCase;
@@ -143,11 +175,27 @@ int main() {
 
 		makeMap(h, w);
 
-		makeGroup(h, w);
+		int max = w - 1;
+		int min = 0;
 
-		allReverse();
+		for (; min < max; min++, max--) {
 
+			for (int j = 0; j < h; j++) {
 
+				char temp = Grill[j][min];
+				Grill[j][min] = Grill[j][max];
+				Grill[j][max] = temp;
+			}
+		}
+
+		for (int y = 0; y < h; y++) {
+			for (int x = 0; x < w; x++) {
+				cout << Grill[y][x];
+			}
+			cout << endl;
+		}
+
+		Grill.clear();
 	}
 
 
